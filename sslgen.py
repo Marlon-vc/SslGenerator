@@ -280,4 +280,4 @@ def get_hex(output: str):
 
 
 if __name__ == '__main__':
-    SslGen(sys.argv[1:], headless=False)
+    SslGen(sys.argv[1:])
