@@ -28,11 +28,11 @@ class SslGen:
         opts = Options()
         opts.headless = headless
         self.browser = Firefox(options=opts)
-        self.browser.implicitly_wait(10)
+        self.browser.implicitly_wait(60)
         self.browser.get('https://gethttpsforfree.com/')
 
         # Needed for filling field 1
-        time.sleep(2)
+        time.sleep(5)
 
         # Steps
         try:
@@ -96,7 +96,7 @@ class SslGen:
                     sys.exit(1)
 
     def get_element_by_id(self, element_id):
-        return WebDriverWait(self.browser, 30).until(
+        return WebDriverWait(self.browser, 60).until(
             ec.element_to_be_clickable((By.ID, element_id)))
 
     def write_field(self, field_id: str, value: str, submit=True):
@@ -135,10 +135,10 @@ class SslGen:
     def get_in(self, container_id, selector, multiple=True):
         full_selector = f'#{container_id} {selector}'
         if multiple:
-            return WebDriverWait(self.browser, 30).until(
+            return WebDriverWait(self.browser, 60).until(
                 ec.visibility_of_all_elements_located((By.CSS_SELECTOR, full_selector)))
         else:
-            return WebDriverWait(self.browser, 30).until(
+            return WebDriverWait(self.browser, 60).until(
                 ec.element_to_be_clickable((By.CSS_SELECTOR, full_selector)))
 
     def account_info(self):
@@ -155,7 +155,7 @@ class SslGen:
                 account_file.write(output)
 
         # write public account.key
-        pubkey, error, code = execute('openssl rsa -in account.key -pubout')
+        pubkey, error, code = execute(f'openssl rsa -in ' + self.output_dir + 'account.key -pubout')
         self.abort_if_err(error, code)
         self.write_field('pubkey', pubkey)
 
@@ -280,4 +280,4 @@ def get_hex(output: str):
 
 
 if __name__ == '__main__':
-    SslGen(sys.argv[1:])
+    SslGen(sys.argv[1:], headless=False)
